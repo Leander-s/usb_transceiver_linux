@@ -78,7 +78,7 @@ int sendToSlave(master *m) {
     }
     n = 0;
     while (n < BUFFER_SIZE) {
-      n += read(m->connection, m->readBuffer, BUFFER_SIZE);
+      n += read(m->connection, m->readBuffer + n, BUFFER_SIZE);
       char last_c = m->readBuffer[strlen(m->readBuffer)-1];
       if (last_c == '\n') {
         break;
@@ -93,6 +93,7 @@ int sendToSlave(master *m) {
       return 1;
     }
   }
+  memset(m->readBuffer, '\0', BUFFER_SIZE);
   memset(m->sendBuffer, '\0', BUFFER_SIZE);
   return 0;
 }
