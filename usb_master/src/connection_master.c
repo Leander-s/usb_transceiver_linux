@@ -1,7 +1,7 @@
 #include "connection_master.h"
 
 const char *requests[] = {
-    "GET ack",
+    "GET ACK",
 };
 
 const int to_receive[] = {
@@ -38,7 +38,7 @@ int initConnection(const char *path) {
   tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
   tty.c_oflag &= ~OPOST;
   tty.c_oflag &= ~ONLCR;
-  tty.c_cc[VTIME] = 100;
+  tty.c_cc[VTIME] = 10;
   tty.c_cc[VMIN] = 0;
 
   cfsetspeed(&tty, B115200);
