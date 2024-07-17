@@ -59,6 +59,7 @@ master *createMaster() {
 }
 
 void destroyMaster(master *m) {
+  close(m->connection);
   free(m->readBuffer);
   free(m->sendBuffer);
   free(m);
@@ -74,12 +75,12 @@ int sendToSlave(master *m) {
       return 0;
     }
     n = 0;
-    while(n < BUFFER_SIZE){
-        n += read(m->connection, m->readBuffer, BUFFER_SIZE);
-        char last_c = m->readBuffer[n-1];
-        if(last_c == '\0' || last_c == '\n'){
-            break;
-        }
+    while (n < BUFFER_SIZE) {
+      n += read(m->connection, m->readBuffer, BUFFER_SIZE);
+      char last_c = m->readBuffer[n - 1];
+      if (last_c == '\0' || last_c == '\n') {
+        break;
+      }
     }
     if (strcmp(m->readBuffer, "ACK\n") == 0) {
       ack = 1;
@@ -105,14 +106,13 @@ int requestFromSlave(master *m, int request_num) {
   memcpy(m->sendBuffer, requests[request_num], strlen(requests[request_num]));
   sendToSlave(m);
 
-  while(amount_received != done){
-      n = read(m->connection, m->readBuffer, BUFFER_SIZE);
-      if(n == 0){
-          failcounter++;
-      }
-      if(failcounter == 20){
-          return 1;
-      }
+  while (amount_received != done) {
+    n = read(m->connection, m->readBuffer, BUFFER_SIZE);
+    if (n == 0) {
+      failcounter++;
+    }
+    if (failcounter == 20) {
+      return 1;
+    }
   }
 }
-
