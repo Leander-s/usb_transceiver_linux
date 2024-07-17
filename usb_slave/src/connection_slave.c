@@ -59,7 +59,7 @@ void destroySlave(slave *s) {
 int receiveData(slave *s) {
   ssize_t n = 0;
   while (n < BUFFER_SIZE) {
-    ssize_t received = read(s->connection, s->readBuffer, 100);
+    ssize_t received = read(s->connection, s->readBuffer, BUFFER_SIZE);
     n += received;
     if (received > 0) {
       printf("%lu\n", n);
