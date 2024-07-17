@@ -1,5 +1,4 @@
 #include "connection_slave.h"
-#include <stdio.h>
 
 int initConnection(const char *path) {
   int port = open(path, O_RDWR);
@@ -31,8 +30,8 @@ int initConnection(const char *path) {
   tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
   tty.c_oflag &= ~OPOST;
   tty.c_oflag &= ~ONLCR;
-  tty.c_cc[VTIME] = 0;
-  tty.c_cc[VMIN] = 10;
+  tty.c_cc[VTIME] = 10;
+  tty.c_cc[VMIN] = 0;
 
   cfsetspeed(&tty, B9600);
 
@@ -60,10 +59,10 @@ void destroySlave(slave *s) {
 int receiveData(slave *s) {
   ssize_t n = 0;
   while (n < BUFFER_SIZE) {
-    ssize_t received = read(s->connection, s->readBuffer, 10);
+    ssize_t received = read(s->connection, s->readBuffer, 100);
     n += received;
     if (received > 0) {
-      printf("%lu\n", received);
+      printf("%lu\n", n);
       printf("%s\n", s->readBuffer);
     }
     if (n == 0) {

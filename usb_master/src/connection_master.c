@@ -1,4 +1,5 @@
 #include "connection_master.h"
+#include <cstdio>
 
 const char *requests[] = {
     "GET ACK",
@@ -70,10 +71,12 @@ void destroyMaster(master *m) {
 int sendToSlave(master *m) {
   int ack = 0;
   int failcounter = 0;
+  ssize_t total = 0;
   while (!ack) {
     printf("Sending %s\n", m->sendBuffer);
     ssize_t n = write(m->connection, m->sendBuffer, strlen(m->sendBuffer));
-    printf("%lu sent\n", n);
+    total += n;
+    printf("%lu sent\n", total);
     if (n == 0) {
       printf("Nothing was sent\n");
       return 0;
