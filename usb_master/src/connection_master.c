@@ -1,8 +1,7 @@
 #include "connection_master.h"
-#include <stdio.h>
 
 const char *requests[] = {
-    "GET ack",
+    "GET ACK",
 };
 
 const int to_receive[] = {
