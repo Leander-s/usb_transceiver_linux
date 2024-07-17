@@ -72,8 +72,7 @@ int sendToSlave(master *m) {
   int failcounter = 0;
   while (!ack) {
     printf("Sending %s\n", m->sendBuffer);
-    memset(m->sendBuffer, 'o', BUFFER_SIZE-1);
-    ssize_t n = write(m->connection, m->sendBuffer, BUFFER_SIZE);
+    ssize_t n = write(m->connection, m->sendBuffer, strlen(m->sendBuffer));
     printf("%lu sent\n", n);
     if (n == 0) {
       printf("Nothing was sent\n");
