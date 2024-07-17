@@ -80,12 +80,13 @@ int sendToSlave(master *m) {
     while (n < BUFFER_SIZE) {
       ssize_t received = read(m->connection, m->readBuffer + n, BUFFER_SIZE);
       n += received;
-      char last_c = m->readBuffer[strlen(m->readBuffer)-1];
+      char last_c = m->readBuffer[strlen(m->readBuffer) - 1];
       if (last_c == '\n') {
         break;
       }
     }
     if (strcmp(m->readBuffer, "ACK\n") == 0) {
+      printf("Got ACK\n");
       ack = 1;
     } else {
       failcounter++;
