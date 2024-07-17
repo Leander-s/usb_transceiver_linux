@@ -80,7 +80,7 @@ int sendToSlave(master *m) {
     while (n < BUFFER_SIZE) {
       n += read(m->connection, m->readBuffer, BUFFER_SIZE);
       char last_c = m->readBuffer[n - 1];
-      if (last_c == '\0' || last_c == '\n') {
+      if (last_c == '\n') {
         break;
       }
     }
@@ -107,8 +107,8 @@ int requestFromSlave(master *m, int request_num) {
   memset(m->sendBuffer, '\0', BUFFER_SIZE);
   memcpy(m->sendBuffer, requests[request_num],
          strlen(requests[request_num]) + 1);
-  sendToSlave(m);
 
+  sendToSlave(m);
   while (amount_received != done) {
     n = read(m->connection, m->readBuffer, BUFFER_SIZE);
     amount_received += n;
