@@ -79,7 +79,7 @@ int sendToSlave(master *m) {
     n = 0;
     while (n < BUFFER_SIZE) {
       n += read(m->connection, m->readBuffer, BUFFER_SIZE);
-      char last_c = m->readBuffer[n - 1];
+      char last_c = m->readBuffer[strlen(m->readBuffer)-1];
       if (last_c == '\n') {
         break;
       }
