@@ -9,7 +9,7 @@ int main() {
   char message[BUFFER_SIZE];
   memset(message, '\0', BUFFER_SIZE);
   memcpy(message, "ACK\n", strlen("ACK\n"));
-  int err = write(port, message, strlen(message));
+  int err = write(port, message, strlen(message)+1);
   if (err < 0) {
     printf("Error on write\n");
   }
