@@ -8,7 +8,7 @@ int main() {
   memset(readbuffer, '\0', BUFFER_SIZE);
   char message[BUFFER_SIZE];
   memset(message, '\0', BUFFER_SIZE);
-  memcpy(message, "ACK\n", strlen("ACK\n"));
+  memcpy(message, "ACK\n", strlen("ACK")+1);
   int err = write(port, message, strlen(message)+1);
   if (err < 0) {
     printf("Error on write\n");
