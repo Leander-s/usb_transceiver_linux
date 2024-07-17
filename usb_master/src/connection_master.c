@@ -73,7 +73,14 @@ int sendToSlave(master *m) {
       printf("Nothing was sent\n");
       return 0;
     }
-    n = read(m->connection, m->readBuffer, BUFFER_SIZE);
+    n = 0;
+    while(n < BUFFER_SIZE){
+        n += read(m->connection, m->readBuffer, BUFFER_SIZE);
+        char last_c = m->readBuffer[n-1];
+        if(last_c == '\0' || last_c == '\n'){
+            break;
+        }
+    }
     if (strcmp(m->readBuffer, "ACK\n") == 0) {
       ack = 1;
     } else {

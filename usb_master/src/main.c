@@ -15,10 +15,16 @@ int main() {
   }
 
   int n = 0;
-  while (readbuffer[n] != '\n') {
-    n += read(port, &readbuffer, BUFFER_SIZE);
-    if(n == -1){
+  while (readbuffer[n-1] != '\n') {
+    int received = read(port, &readbuffer, BUFFER_SIZE);
+    if(received  == -1){
         printf("Error while reading\n");
+    }
+    if(received != 0){
+        n = strlen(readbuffer);
+    }
+    if(n + 1 == BUFFER_SIZE){
+        break;
     }
   }
   printf("%s\n", readbuffer);
