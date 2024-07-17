@@ -112,6 +112,7 @@ int requestFromSlave(master *m, int request_num) {
   while (amount_received != done) {
     n = read(m->connection, m->readBuffer, BUFFER_SIZE);
     amount_received += n;
+    printf("%d\n", amount_received);
     if (n == 0) {
       failcounter++;
     }

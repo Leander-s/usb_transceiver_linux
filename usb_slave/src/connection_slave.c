@@ -1,4 +1,5 @@
 #include "connection_slave.h"
+#include <stdio.h>
 
 int initConnection(const char *path) {
   int port = open(path, O_RDWR);
@@ -74,7 +75,8 @@ int receiveData(slave *s) {
 }
 
 void handleRequest(slave *s, char *request) {
-  if (strcmp(request, "ACK") == 0) {
+  if (strcmp(request, "ACK\n") == 0) {
+    printf("Handling ACK\n");
     write(s->connection, "ACK\n", 4);
     return;
   }
