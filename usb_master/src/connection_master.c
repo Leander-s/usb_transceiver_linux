@@ -1,4 +1,5 @@
 #include "connection_master.h"
+#include <stdio.h>
 
 const char *requests[] = {
     "GET ack",
@@ -38,7 +39,7 @@ int initConnection(const char *path) {
   tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
   tty.c_oflag &= ~OPOST;
   tty.c_oflag &= ~ONLCR;
-  tty.c_cc[VTIME] = 100;
+  tty.c_cc[VTIME] = 10;
   tty.c_cc[VMIN] = 0;
 
   cfsetspeed(&tty, B115200);
@@ -54,7 +55,9 @@ master *createMaster() {
   master *result = (master *)malloc(sizeof(master));
   result->connection = initConnection("/dev/ttyACM0");
   result->readBuffer = (char *)malloc(BUFFER_SIZE);
+  memset(result->readBuffer, '\0', BUFFER_SIZE);
   result->sendBuffer = (char *)malloc(BUFFER_SIZE);
+  memset(result->sendBuffer, '\0', BUFFER_SIZE);
   return result;
 }
 
@@ -69,7 +72,9 @@ int sendToSlave(master *m) {
   int ack = 0;
   int failcounter = 0;
   while (!ack) {
-    int n = write(m->connection, m->sendBuffer, BUFFER_SIZE);
+    printf("Sending %s\n", m->sendBuffer);
+    ssize_t n = write(m->connection, m->sendBuffer, BUFFER_SIZE);
+    printf("%lu sent\n", n);
     if (n == 0) {
       printf("Nothing was sent\n");
       return 0;
@@ -83,6 +88,7 @@ int sendToSlave(master *m) {
       }
     }
     if (strcmp(m->readBuffer, "ACK\n") == 0) {
+      printf("Got ack\n");
       ack = 1;
     } else {
       failcounter++;
@@ -103,7 +109,8 @@ int requestFromSlave(master *m, int request_num) {
   int done = to_receive[request_num];
   memset(m->readBuffer, '\0', BUFFER_SIZE);
   memset(m->sendBuffer, '\0', BUFFER_SIZE);
-  memcpy(m->sendBuffer, requests[request_num], strlen(requests[request_num]));
+  memcpy(m->sendBuffer, requests[request_num],
+         strlen(requests[request_num]) + 1);
   sendToSlave(m);
 
   while (amount_received != done) {
@@ -115,4 +122,5 @@ int requestFromSlave(master *m, int request_num) {
       return 1;
     }
   }
+  return 0;
 }
