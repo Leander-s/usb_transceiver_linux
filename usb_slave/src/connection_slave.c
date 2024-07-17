@@ -59,6 +59,9 @@ int receiveData(slave *s) {
   int n;
   while (n < BUFFER_SIZE) {
     n += read(s->connection, s->readBuffer, BUFFER_SIZE);
+    if (n == 0) {
+      continue;
+    }
     char last = s->readBuffer[n - 1];
     if (last == '\0' || last == '\n') {
       write(s->connection, "ACK\n", 4);
