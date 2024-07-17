@@ -1,5 +1,4 @@
 #include "connection_slave.h"
-#include <stdio.h>
 
 int initConnection(const char *path) {
   int port = open(path, O_RDWR);
@@ -67,6 +66,7 @@ int receiveData(slave *s) {
     }
     char last = s->readBuffer[strlen(s->readBuffer) - 1];
     if (last == '\n') {
+      printf("Sending ack\n");
       n = write(s->connection, "ACK\n", 4);
       if (n != 4) {
         printf("What happened on write\n");
@@ -74,7 +74,6 @@ int receiveData(slave *s) {
       break;
     }
   }
-  printf("%s\n", s->readBuffer);
   return n;
 }
 
@@ -105,6 +104,7 @@ void handleData(slave *s) {
 
 void runSlave(slave *s) {
   while (1) {
+    printf("\n");
     receiveData(s);
     handleData(s);
   }
