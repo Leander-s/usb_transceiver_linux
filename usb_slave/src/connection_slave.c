@@ -33,7 +33,7 @@ int initConnection(const char *path) {
   tty.c_cc[VTIME] = 10;
   tty.c_cc[VMIN] = 0;
 
-  cfsetspeed(&tty, B9600);
+  cfsetspeed(&tty, B115200);
 
   if (tcsetattr(port, TCSANOW, &tty) != 0) {
     printf("Error from tcsetattr: %s\n", strerror(errno));
