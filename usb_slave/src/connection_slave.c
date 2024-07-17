@@ -1,4 +1,5 @@
 #include "connection_slave.h"
+#include <stdio.h>
 
 int initConnection(const char *path) {
   int port = open(path, O_RDWR);
@@ -46,6 +47,7 @@ slave *createSlave() {
   slave *result = (slave *)malloc(sizeof(slave));
   result->connection = initConnection("/dev/ttyACM0");
   result->readBuffer = (char *)malloc(BUFFER_SIZE);
+  memset(result->readBuffer, '\0', BUFFER_SIZE);
   return result;
 }
 
@@ -56,14 +58,18 @@ void destroySlave(slave *s) {
 }
 
 int receiveData(slave *s) {
-  int n;
+  ssize_t n = 0;
   while (n < BUFFER_SIZE) {
-    n += read(s->connection, s->readBuffer, BUFFER_SIZE);
+    ssize_t received = read(s->connection, &s->readBuffer, BUFFER_SIZE);
+    n += received;
+    if (received > 0) {
+      printf("%s\n", s->readBuffer);
+    }
     if (n == 0) {
       continue;
     }
-    char last = s->readBuffer[n - 1];
-    if (last == '\0' || last == '\n') {
+    char last = s->readBuffer[strlen(s->readBuffer) - 1];
+    if (last == '\n') {
       write(s->connection, "ACK\n", 4);
       break;
     }
@@ -72,6 +78,7 @@ int receiveData(slave *s) {
 }
 
 void handleRequest(slave *s, char *request) {
+  printf("Handling request\n");
   if (strcmp(request, "ACK") == 0) {
     write(s->connection, "ACK\n", 4);
     return;
@@ -79,6 +86,7 @@ void handleRequest(slave *s, char *request) {
 }
 
 void handleData(slave *s) {
+  printf("Handling data\n");
   char *receivedData = s->readBuffer;
 
   // Check if it's a request
