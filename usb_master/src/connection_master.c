@@ -114,7 +114,7 @@ int requestFromSlave(master *m, int request_num) {
 
   sendToSlave(m);
   while (amount_received != done) {
-    n = read(m->connection, m->readBuffer, BUFFER_SIZE);
+    n = read(m->connection, m->readBuffer + amount_received, BUFFER_SIZE);
     amount_received += n;
     printf("%d\n", amount_received);
     if (n == 0) {

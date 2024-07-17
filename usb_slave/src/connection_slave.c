@@ -68,7 +68,7 @@ int receiveData(slave *s) {
     if (last == '\n') {
       printf("Sending ack\n");
       n = write(s->connection, "ACK\n\0", 5);
-      if (n != 4) {
+      if (n != 5) {
         printf("What happened on write\n");
       }
       break;
