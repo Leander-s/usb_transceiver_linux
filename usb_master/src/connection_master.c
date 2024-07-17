@@ -1,4 +1,5 @@
 #include "connection_master.h"
+#include <string.h>
 
 const char *requests[] = {
     "GET ACK\n",
@@ -82,10 +83,10 @@ int sendToSlave(master *m) {
       n += received;
       char last_c = m->readBuffer[strlen(m->readBuffer) - 1];
       if (last_c == '\n') {
-        printf("good\n");
         break;
       }
     }
+    printf("%d\n", strcmp(m->readBuffer, "ACK\n"));
     if (strcmp(m->readBuffer, "ACK\n") == 0) {
       printf("Got ACK\n");
       ack = 1;
