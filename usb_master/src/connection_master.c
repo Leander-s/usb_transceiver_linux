@@ -86,7 +86,8 @@ int sendToSlave(master *m) {
         break;
       }
     }
-    printf("%d\n", strcmp(m->readBuffer, "ACK\n"));
+    printf("%s\n", m->readBuffer);
+    //printf("%d\n", strcmp(m->readBuffer, "ACK\n"));
     if (strcmp(m->readBuffer, "ACK\n") == 0) {
       printf("Got ACK\n");
       ack = 1;
