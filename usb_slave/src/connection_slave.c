@@ -67,7 +67,7 @@ int receiveData(slave *s) {
     char last = s->readBuffer[strlen(s->readBuffer) - 1];
     if (last == '\n') {
       printf("Sending ack\n");
-      n = write(s->connection, "ACK\n", 4);
+      n = write(s->connection, "ACK\n\0", 5);
       if (n != 4) {
         printf("What happened on write\n");
       }
