@@ -58,7 +58,7 @@ void destroySlave(slave *s) {
 int receiveData(slave *s) {
   int n;
   while (n < BUFFER_SIZE) {
-    n += read(s->connection, &s->readBuffer, BUFFER_SIZE);
+    n += read(s->connection, s->readBuffer, BUFFER_SIZE);
     char last = s->readBuffer[n - 1];
     if (last == '\0' || last == '\n') {
       write(s->connection, "ACK\n", 4);
