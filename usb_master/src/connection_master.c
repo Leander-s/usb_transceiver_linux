@@ -81,8 +81,8 @@ int sendToSlave(master *m) {
       ssize_t received = read(m->connection, m->readBuffer + n, BUFFER_SIZE);
       n += received;
       char last_c = m->readBuffer[strlen(m->readBuffer) - 1];
-      printf("%c\n", last_c);
       if (last_c == '\n') {
+        printf("good\n");
         break;
       }
     }
