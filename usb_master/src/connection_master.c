@@ -1,5 +1,4 @@
 #include "connection_master.h"
-#include <stdio.h>
 
 const char *requests[] = {
     "GET ACK",
