@@ -61,10 +61,6 @@ int receiveData(slave *s) {
   while (n < BUFFER_SIZE) {
     ssize_t received = read(s->connection, s->readBuffer, BUFFER_SIZE);
     n += received;
-    if (received > 0) {
-      printf("%lu\n", n);
-      printf("%s\n", s->readBuffer);
-    }
     if (n == 0) {
       continue;
     }
@@ -78,7 +74,6 @@ int receiveData(slave *s) {
 }
 
 void handleRequest(slave *s, char *request) {
-  printf("Handling request\n");
   if (strcmp(request, "ACK") == 0) {
     write(s->connection, "ACK\n", 4);
     return;
@@ -86,7 +81,6 @@ void handleRequest(slave *s, char *request) {
 }
 
 void handleData(slave *s) {
-  printf("Handling data\n");
   char *receivedData = s->readBuffer;
 
   // Check if it's a request

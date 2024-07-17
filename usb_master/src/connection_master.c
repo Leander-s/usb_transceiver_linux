@@ -71,7 +71,6 @@ int sendToSlave(master *m) {
   int ack = 0;
   int failcounter = 0;
   while (!ack) {
-    printf("Sending %s\n", m->sendBuffer);
     ssize_t n = write(m->connection, m->sendBuffer, strlen(m->sendBuffer));
     if (n == 0) {
       printf("Nothing was sent\n");
@@ -86,7 +85,6 @@ int sendToSlave(master *m) {
       }
     }
     if (strcmp(m->readBuffer, "ACK\n") == 0) {
-      printf("Got ack\n");
       ack = 1;
     } else {
       failcounter++;
@@ -113,6 +111,7 @@ int requestFromSlave(master *m, int request_num) {
 
   while (amount_received != done) {
     n = read(m->connection, m->readBuffer, BUFFER_SIZE);
+    amount_received += n;
     if (n == 0) {
       failcounter++;
     }
