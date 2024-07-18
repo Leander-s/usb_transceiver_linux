@@ -1,13 +1,4 @@
 #include "connection_master.h"
-#include <string.h>
-
-const char *requests[] = {
-    "GET ACK\n",
-};
-
-const int to_receive[] = {
-    4,
-};
 
 int initConnection(const char *path) {
   int port = open(path, O_RDWR);
@@ -86,7 +77,9 @@ int sendToSlave(master *m) {
         break;
       }
     }
-    if (strcmp(m->readBuffer, "ACK\n") == 0) {
+    char ackBuffer[4];
+    memcpy(ackBuffer, m->readBuffer, 4);
+    if (strcmp(ackBuffer, "ACK\n") == 0) {
       printf("Got ACK\n");
       ack = 1;
     } else {
@@ -98,31 +91,5 @@ int sendToSlave(master *m) {
   }
   memset(m->readBuffer, '\0', BUFFER_SIZE);
   memset(m->sendBuffer, '\0', BUFFER_SIZE);
-  return 0;
-}
-
-int requestFromSlave(master *m, int request_num) {
-  int amount_received = 0;
-  int n;
-  int failcounter = 0;
-  const char *request = requests[request_num];
-  int done = to_receive[request_num];
-  memset(m->readBuffer, '\0', BUFFER_SIZE);
-  memset(m->sendBuffer, '\0', BUFFER_SIZE);
-  memcpy(m->sendBuffer, requests[request_num],
-         strlen(requests[request_num]) + 1);
-
-  sendToSlave(m);
-  while (amount_received != done) {
-    n = read(m->connection, m->readBuffer + amount_received, BUFFER_SIZE);
-    amount_received += n;
-    printf("%d\n", amount_received);
-    if (n == 0) {
-      failcounter++;
-    }
-    if (failcounter == 20) {
-      return 1;
-    }
-  }
   return 0;
 }

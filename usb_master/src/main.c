@@ -2,7 +2,8 @@
 
 int main() {
   master* m = createMaster();
-  requestFromSlave(m, 0);
+  memcpy(m->sendBuffer, "Give me an ack\n", 15);
+  sendToSlave(m);
   m->sendBuffer[0] = 'W';
   sendToSlave(m);
   destroyMaster(m);
