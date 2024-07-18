@@ -66,10 +66,9 @@ int receiveData(slave *s) {
     }
     char last = s->readBuffer[strlen(s->readBuffer) - 1];
     if (last == '\n') {
-      printf("Sending ack\n");
       n = write(s->connection, "ACK\n\0", 5);
       if (n != 5) {
-        printf("What happened on write\n");
+        printf("Error on write\n");
       }
       break;
     }
