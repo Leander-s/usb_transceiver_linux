@@ -76,6 +76,13 @@ int sendToSlave(master *m) {
       char last_c = m->readBuffer[strlen(m->readBuffer) - 1];
       if (last_c == '\n') {
         break;
+      } else {
+          failcounter++;
+      }
+      if(failcounter > 100){
+          memset(m->readBuffer, '\0', BUFFER_SIZE);
+          failcounter = 0;
+          break;
       }
     }
     char ackBuffer[4];
@@ -86,7 +93,7 @@ int sendToSlave(master *m) {
     } else {
       failcounter++;
     }
-    if (failcounter > 20) {
+    if (failcounter > 100) {
       return 1;
     }
   }
