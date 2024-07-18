@@ -77,25 +77,15 @@ int receiveData(slave *s) {
   return n;
 }
 
-void handleRequest(slave *s, char *request) {
-  if (strcmp(request, "ACK\n") == 0) {
-    printf("Handling ACK\n");
-    write(s->connection, "ACK\n", 4);
-    return;
-  }
-}
-
 void handleData(slave *s) {
   char *receivedData = s->readBuffer;
+  char *sendBuffer = (char*)malloc(BUFFER_SIZE-4);
+  char *inputData = sendBuffer;
 
-  // Check if it's a request
-  char prefix[4];
-  memcpy(prefix, receivedData, 4);
-  if (strcmp(prefix, "GET ") == 0) {
-    handleRequest(s, receivedData + 4);
-    memset(receivedData, '\0', BUFFER_SIZE);
-    return;
-  }
+  // Send data to master
+  memcpy(inputData, "ACK\n", 4);
+  inputData += 4;
+  write(s->connection, sendBuffer, strlen(sendBuffer));
 
   // handle the data
   printf("%s", receivedData);
@@ -104,7 +94,6 @@ void handleData(slave *s) {
 
 void runSlave(slave *s) {
   while (1) {
-    printf("\n");
     receiveData(s);
     handleData(s);
   }
