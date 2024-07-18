@@ -63,6 +63,7 @@ int sendToSlave(master *m) {
   int ack = 0;
   int failcounter = 0;
   while (!ack) {
+    printf("Writing to slave\n");
     ssize_t n = write(m->connection, m->sendBuffer, strlen(m->sendBuffer));
     if (n == 0) {
       printf("Nothing was sent\n");
@@ -89,6 +90,7 @@ int sendToSlave(master *m) {
       return 1;
     }
   }
+  printf("Exited writing loop\n");
   memset(m->readBuffer, '\0', BUFFER_SIZE);
   memset(m->sendBuffer, '\0', BUFFER_SIZE);
   return 0;
