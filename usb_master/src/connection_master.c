@@ -71,18 +71,19 @@ int sendToSlave(master *m) {
     }
     n = 0;
     while (n < BUFFER_SIZE) {
+      printf("Reading from slave\n");
       ssize_t received = read(m->connection, m->readBuffer + n, BUFFER_SIZE);
       n += received;
       char last_c = m->readBuffer[strlen(m->readBuffer) - 1];
       if (last_c == '\n') {
         break;
       } else {
-          failcounter++;
+        failcounter++;
       }
-      if(failcounter > 100){
-          memset(m->readBuffer, '\0', BUFFER_SIZE);
-          failcounter = 0;
-          break;
+      if (failcounter > 100) {
+        memset(m->readBuffer, '\0', BUFFER_SIZE);
+        failcounter = 0;
+        break;
       }
     }
     char ackBuffer[4];
