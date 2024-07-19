@@ -80,7 +80,7 @@ int sendToSlave(master *m) {
       } else {
         failcounter++;
       }
-      if (failcounter > 100) {
+      if (failcounter > 10000) {
         memset(m->readBuffer, '\0', BUFFER_SIZE);
         failcounter = 0;
         break;
@@ -93,7 +93,7 @@ int sendToSlave(master *m) {
     } else {
       failcounter++;
     }
-    if (failcounter > 100) {
+    if (failcounter > 10000) {
       memset(m->readBuffer, '\0', BUFFER_SIZE);
       memset(m->sendBuffer, '\0', BUFFER_SIZE);
       return 1;
