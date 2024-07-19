@@ -71,15 +71,18 @@ int sendToSlave(master *m) {
       return 0;
     }
     n = 0;
+    int read_failcounter = 0;
     while (n < BUFFER_SIZE) {
       ssize_t received = read(m->connection, m->readBuffer + n, BUFFER_SIZE);
       n += received;
       char last_c = m->readBuffer[strlen(m->readBuffer) - 1];
       if (last_c == '\n') {
         break;
-      } else {
-        break;
+      } 
+      if(read_failcounter > 100){
+          break;
       }
+      read_failcounter++;
     }
     char ackBuffer[4];
     memcpy(ackBuffer, m->readBuffer, 4);

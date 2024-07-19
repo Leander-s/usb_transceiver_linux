@@ -30,7 +30,7 @@ int initConnection(const char *path) {
   tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
   tty.c_oflag &= ~OPOST;
   tty.c_oflag &= ~ONLCR;
-  tty.c_cc[VTIME] = 0;
+  tty.c_cc[VTIME] = 1;
   tty.c_cc[VMIN] = 0;
 
   cfsetspeed(&tty, B115200);
