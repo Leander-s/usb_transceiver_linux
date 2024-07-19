@@ -30,7 +30,7 @@ int initConnection(const char *path) {
   tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
   tty.c_oflag &= ~OPOST;
   tty.c_oflag &= ~ONLCR;
-  tty.c_cc[VTIME] = 10;
+  tty.c_cc[VTIME] = 1;
   tty.c_cc[VMIN] = 0;
 
   cfsetspeed(&tty, B115200);
@@ -63,7 +63,6 @@ int sendToSlave(master *m) {
   int ack = 0;
   int failcounter = 0;
   while (!ack) {
-    printf("Sending\n");
     ssize_t n = write(m->connection, m->sendBuffer, strlen(m->sendBuffer));
     if (n == 0) {
       printf("Nothing was sent\n");
@@ -77,7 +76,6 @@ int sendToSlave(master *m) {
       n += received;
       char last_c = m->readBuffer[strlen(m->readBuffer) - 1];
       if (last_c == '\n') {
-        printf("breaking\n");
         break;
       } else {
         break;
@@ -86,11 +84,13 @@ int sendToSlave(master *m) {
     char ackBuffer[4];
     memcpy(ackBuffer, m->readBuffer, 4);
     if (strcmp(ackBuffer, "ACK\n") == 0) {
+      printf("Sent\n");
       ack = 1;
     } else {
       failcounter++;
     }
     if (failcounter > 10000) {
+      printf("Failed to send\n");
       memset(m->readBuffer, '\0', BUFFER_SIZE);
       memset(m->sendBuffer, '\0', BUFFER_SIZE);
       return 1;
