@@ -66,6 +66,8 @@ int sendToSlave(master *m) {
     ssize_t n = write(m->connection, m->sendBuffer, strlen(m->sendBuffer));
     if (n == 0) {
       printf("Nothing was sent\n");
+      memset(m->readBuffer, '\0', BUFFER_SIZE);
+      memset(m->sendBuffer, '\0', BUFFER_SIZE);
       return 0;
     }
     n = 0;
@@ -92,6 +94,8 @@ int sendToSlave(master *m) {
       failcounter++;
     }
     if (failcounter > 100) {
+      memset(m->readBuffer, '\0', BUFFER_SIZE);
+      memset(m->sendBuffer, '\0', BUFFER_SIZE);
       return 1;
     }
   }
