@@ -3,6 +3,7 @@
 typedef struct {
     int connection;
     char* readBuffer;
+    char* sendBuffer;
 } slave;
 
 int initConnection(const char* path);

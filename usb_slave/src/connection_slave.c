@@ -30,7 +30,7 @@ int initConnection(const char *path) {
   tty.c_iflag &= ~(IGNBRK | BRKINT | PARMRK | ISTRIP | INLCR | IGNCR | ICRNL);
   tty.c_oflag &= ~OPOST;
   tty.c_oflag &= ~ONLCR;
-  tty.c_cc[VTIME] = 10;
+  tty.c_cc[VTIME] = 0;
   tty.c_cc[VMIN] = 0;
 
   cfsetspeed(&tty, B115200);
@@ -47,12 +47,16 @@ slave *createSlave() {
   result->connection = initConnection("/dev/ttyACM0");
   result->readBuffer = (char *)malloc(BUFFER_SIZE);
   memset(result->readBuffer, '\0', BUFFER_SIZE);
+  result->sendBuffer = (char *)malloc(BUFFER_SIZE);
+  memset(result->sendBuffer, '\0', BUFFER_SIZE);
+  memcpy(result->sendBuffer, "ACK\n", 4);
   return result;
 }
 
 void destroySlave(slave *s) {
   close(s->connection);
   free(s->readBuffer);
+  free(s->sendBuffer);
   free(s);
 }
 
@@ -60,14 +64,21 @@ int receiveData(slave *s) {
   ssize_t n = 0;
   memset(s->readBuffer, '\0', BUFFER_SIZE);
   while (n < BUFFER_SIZE) {
-    ssize_t received = read(s->connection, s->readBuffer + n, BUFFER_SIZE);
+    ssize_t received = read(s->connection, s->readBuffer + n, BUFFER_SIZE - n);
     n += received;
     if (n == 0) {
       continue;
     }
     char last = s->readBuffer[strlen(s->readBuffer) - 1];
     if (last == '\n') {
+      write(s->connection, s->sendBuffer, strlen(s->sendBuffer));
+      memset(s->sendBuffer + 4, '\0', BUFFER_SIZE - 4);
       break;
+    }
+    if (n > strlen(s->readBuffer)) {
+      printf("Resetting\n");
+      n = 0;
+      memset(s->readBuffer, '\0', BUFFER_SIZE);
     }
   }
   return n;
@@ -75,14 +86,6 @@ int receiveData(slave *s) {
 
 void handleData(slave *s) {
   char *receivedData = s->readBuffer;
-  char *sendBuffer = (char *)malloc(BUFFER_SIZE);
-  char *inputData = sendBuffer;
-
-  // Send data to master
-  memcpy(inputData, "ACK\n", 4);
-  inputData += 4;
-  write(s->connection, sendBuffer, strlen(sendBuffer));
-  free(sendBuffer);
 
   // handle the data
   printf("%s", receivedData);
