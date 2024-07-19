@@ -71,6 +71,7 @@ int sendToSlave(master *m) {
       return 0;
     }
     n = 0;
+    int read_failcounter = 0;
     while (n < BUFFER_SIZE) {
       ssize_t received = read(m->connection, m->readBuffer + n, BUFFER_SIZE);
       n += received;
@@ -78,11 +79,10 @@ int sendToSlave(master *m) {
       if (last_c == '\n') {
         break;
       } else {
-        failcounter++;
+        read_failcounter++;
       }
-      if (failcounter > 10000) {
+      if (read_failcounter > 100) {
         memset(m->readBuffer, '\0', BUFFER_SIZE);
-        failcounter = 0;
         break;
       }
     }
