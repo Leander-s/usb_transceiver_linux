@@ -63,6 +63,7 @@ int sendToSlave(master *m) {
   int ack = 0;
   int failcounter = 0;
   while (!ack) {
+    printf("Sending\n");
     ssize_t n = write(m->connection, m->sendBuffer, strlen(m->sendBuffer));
     if (n == 0) {
       printf("Nothing was sent\n");
