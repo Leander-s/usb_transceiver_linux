@@ -58,6 +58,7 @@ void destroySlave(slave *s) {
 
 int receiveData(slave *s) {
   ssize_t n = 0;
+  memset(s->readBuffer, '\0', BUFFER_SIZE);
   while (n < BUFFER_SIZE) {
     ssize_t received = read(s->connection, s->readBuffer + n, BUFFER_SIZE);
     n += received;
@@ -66,25 +67,22 @@ int receiveData(slave *s) {
     }
     char last = s->readBuffer[strlen(s->readBuffer) - 1];
     if (last == '\n') {
-      n = write(s->connection, "ACK\n\0", 5);
-      if (n != 5) {
-        printf("Error on write\n");
+        break;
       }
-      break;
-    }
   }
   return n;
 }
 
 void handleData(slave *s) {
   char *receivedData = s->readBuffer;
-  char *sendBuffer = (char*)malloc(BUFFER_SIZE-4);
+  char *sendBuffer = (char*)malloc(BUFFER_SIZE);
   char *inputData = sendBuffer;
 
   // Send data to master
   memcpy(inputData, "ACK\n", 4);
   inputData += 4;
   write(s->connection, sendBuffer, strlen(sendBuffer));
+  free(sendBuffer);
 
   // handle the data
   printf("%s", receivedData);
