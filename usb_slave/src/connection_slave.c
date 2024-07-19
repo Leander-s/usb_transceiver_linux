@@ -67,15 +67,15 @@ int receiveData(slave *s) {
     }
     char last = s->readBuffer[strlen(s->readBuffer) - 1];
     if (last == '\n') {
-        break;
-      }
+      break;
+    }
   }
   return n;
 }
 
 void handleData(slave *s) {
   char *receivedData = s->readBuffer;
-  char *sendBuffer = (char*)malloc(BUFFER_SIZE);
+  char *sendBuffer = (char *)malloc(BUFFER_SIZE);
   char *inputData = sendBuffer;
 
   // Send data to master
