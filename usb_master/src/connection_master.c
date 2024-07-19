@@ -88,6 +88,8 @@ int sendToSlave(master *m) {
     memcpy(ackBuffer, m->readBuffer, 4);
     if (strcmp(ackBuffer, "ACK\n") == 0) {
       printf("Sent\n");
+      printf("Last read fails %d\n", read_failcounter);
+      printf("Write fails %d\n", failcounter);
       ack = 1;
     } else {
       failcounter++;
