@@ -166,7 +166,7 @@ int sendToSlave(master *m) {
     } else {
       failcounter++;
     }
-    if (failcounter > 10000) {
+    if (failcounter > 100) {
       printf("Failed to send\n");
       memset(m->readBuffer, '\0', BUFFER_SIZE);
       memset(m->sendBuffer, '\0', BUFFER_SIZE);
